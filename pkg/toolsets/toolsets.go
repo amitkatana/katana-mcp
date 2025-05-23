@@ -38,9 +38,7 @@ func (t *Toolset) GetAvailableTools() []server.ServerTool {
 }
 
 func (t *Toolset) RegisterTools(s *server.MCPServer) {
-	if !t.Enabled {
-		return
-	}
+
 	for _, tool := range t.readTools {
 		s.AddTool(tool.Tool, tool.Handler)
 	}

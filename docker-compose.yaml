@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: bitnami/elasticsearch:8.6.3
+    container_name: elasticsearch
+    environment:
+      # single-node, dev-friendly mode:
+      - discovery.type=single-node
+      # tweak the JVM heap if needed:
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      # disable X-Pack security for local/dev (remove in prod!)
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/bitnami/elasticsearch/data
+    networks:
+      - elk
+
+  kibana:
+    image: bitnami/kibana
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      # point Kibana at our ES service by name:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      # disable security to match ES above
+      - xpack.security.enabled=false
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+
+volumes:
+  esdata:
+
+networks:
+  elk:
+    driver: bridge

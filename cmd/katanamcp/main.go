@@ -4,10 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"katanampc/internals/kmcp"
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -30,7 +27,8 @@ var (
 		Short: "Katana MCP stdio",
 		Long:  `Katana MCP stdio server handles various tools and resources.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			token := viper.GetString("enviroment_api_key")
+			token := viper.GetString("apikey")
+
 			if token == "" {
 				return errors.New("enviroment_api_key not set")
 			}
@@ -42,21 +40,21 @@ var (
 )
 
 func init() {
+
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().String("host", "", "katana external api host cannot be empty")
+	rootCmd.PersistentFlags().String("apiKey", "", "katana env api key")
 
 	_ = viper.BindPFlag("host", rootCmd.PersistentFlags().Lookup("host"))
+
+	_ = viper.BindPFlag("apiKey", rootCmd.PersistentFlags().Lookup("apiKey"))
+
 	rootCmd.AddCommand(stdioCmd)
 }
 
 func initConfig() {
 	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
 	// Bind each environment variable to viper
 
 	viper.AutomaticEnv()

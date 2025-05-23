@@ -4,10 +4,12 @@ import (
 	"katanampc/pkg/toolsets"
 )
 
-func InitToolsets() (*toolsets.ToolsetGroup, error) {
+func InitToolsets(host, apiKey string) (*toolsets.ToolsetGroup, error) {
 	tsg := toolsets.NewToolsetGroup(true)
 
-	products := toolsets.NewToolset("product", "katana product related tools").AddReadTools(toolsets.NewServerTool(SearchProduct()))
+	productMcp := NewProductMcp(host, apiKey)
+
+	products := toolsets.NewToolset("product", "katana product related tools").AddReadTools(toolsets.NewServerTool(productMcp.SearchProduct()))
 
 	tsg.AddToolset(products)
 

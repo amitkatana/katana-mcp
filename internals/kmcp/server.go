@@ -22,7 +22,7 @@ func NewMcpServer(cfg McpServerConfig) (*server.MCPServer, error) {
 
 	s := katana.NewServer(cfg.Version)
 
-	toolsets, err := katana.InitToolsets()
+	toolsets, err := katana.InitToolsets(cfg.Host, cfg.ApiKey)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize toolsets: %w", err)
@@ -57,8 +57,6 @@ func RunStdioServer(cfg StdioServerConfig) error {
 
 		errC <- stdioServer.Listen(ctx, in, out)
 	}()
-
-	_, _ = fmt.Fprintf(os.Stderr, "Github MCP server started on stdio\n")
 
 	select {
 	case ctx := <-ctx.Done():
