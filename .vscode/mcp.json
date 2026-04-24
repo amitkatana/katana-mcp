@@ -2,7 +2,7 @@
   "servers": {
     "katanapim":{
 	"type": "stdio",
-	"command":"/Users/amit/workspace/go/src/mcpserver/katana-mcp/main",
+	"command":"/Volumes/ext/workspace/katana/katana-mcp/main",
 	"args":["stdio","--host=https://demo.katanapim.com/api","--apiKey=6AE98438-A27A-4F09-AB91-FF66B538C708"]
     }
   }
