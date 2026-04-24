@@ -24,11 +24,11 @@ class MSSQLSettings:
     @classmethod
     def from_env(cls) -> "MSSQLSettings":
         return cls(
-            host="overflowlabs.org" or None,
+            host="xxxx" or None,
             port=int(os.environ.get("MSSQL_PORT", "1433")),
             user="sa" or None,
-            password="amitrai123!@#",
-            database="wabtecnl_katanapim",
+            password="----amit",
+            database="000000",
             row_limit=int(os.environ.get("MSSQL_ROW_LIMIT", "500")),
             timeout_seconds=int(os.environ.get("MSSQL_TIMEOUT", "30")),
         )
