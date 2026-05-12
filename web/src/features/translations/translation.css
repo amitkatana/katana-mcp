@@ -1,0 +1,84 @@
+.translation-app {
+  padding: 20px;
+  max-width: 640px;
+  margin: 0 auto;
+  font-family: var(--apps-sdk-font-family-default, ui-sans-serif, system-ui, sans-serif);
+  color: var(--apps-sdk-color-text-default, #0d0d0d);
+}
+
+.translation-header {
+  margin-bottom: 16px;
+}
+
+.translation-title h1 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.translation-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.translation-original {
+  background: var(--apps-sdk-color-bg-subtle, #f7f7f8);
+  border: 1px solid var(--apps-sdk-color-border-default, #e5e5e7);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.translation-original .label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--apps-sdk-color-text-muted, #6b6b72);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.translation-original p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.translation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.translation-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--apps-sdk-color-text-default, #0d0d0d);
+}
+
+.translation-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.translation-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--apps-sdk-color-text-muted, #6b6b72);
+}
+
+.translation-status .dirty-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f59e0b;
+  display: inline-block;
+}
