@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+	katanahttp "github.com/tritac/katana-mcp-goo/internal/client/katanaclient"
 	"github.com/tritac/katana-mcp-goo/internal/data/product"
 	"github.com/tritac/katana-mcp-goo/internal/data/translation"
 )
@@ -12,59 +13,35 @@ import (
 type Core struct {
 	product     product.Store
 	translation translation.Store
+	kc          *katanahttp.KatanaClient
 }
 
-func NewCore(db *sqlx.DB) Core {
-	return Core{product: product.NewStore(db), translation: translation.NewStore(db)}
+func NewCore(db *sqlx.DB, kc *katanahttp.KatanaClient) Core {
+	return Core{product: product.NewStore(db), translation: translation.NewStore(db), kc: kc}
 }
 
-func (c Core) Query(ctx context.Context, query string, limit int) ([]product.Product, error) {
-	products, err := c.product.Query(ctx, limit, query)
+func (c Core) Query(ctx context.Context, query string, limit int) (product.ResponseEnvelop, error) {
+	var products product.ResponseEnvelop
+	res, err := c.kc.KClient.R().SetQueryParam("PageSize", "10").SetQueryParam("includes", "translations").SetResult(&products).Get("/products")
+
+	fmt.Println(string(res.Bytes()))
+
 	if err != nil {
-		return nil, fmt.Errorf("query: %w", err)
+		return product.ResponseEnvelop{}, err
 	}
-	return products, nil
+	return products, err
 }
 
 func (c Core) Find(ctx context.Context, productId int) (product.ProductDetail, error) {
 
-	productDetail, err := c.product.Find(ctx, productId)
-	productDetail.ShortDescription = []translation.TranslationValue{}
-	productDetail.FullDescription = []translation.TranslationValue{}
-
-	productTranslations, err := c.translation.ProductGeneralFieldTranslations(ctx, productId)
-
-	for _, t := range productTranslations {
-		item := translation.TranslationValue{
-			LanguageId:      t.LanguageId,
-			Value:           t.LocaleValue,
-			LanguageCulture: t.LanguageCulture,
-			Key:             t.LocaleKey,
-		}
-
-		switch t.LocaleKey {
-
-		case "ShortDescription":
-			productDetail.ShortDescription = append(
-				productDetail.ShortDescription,
-				item,
-			)
-
-		case "FullDescription":
-			productDetail.FullDescription = append(
-				productDetail.FullDescription,
-				item,
-			)
-		}
-
-	}
+	res, err := c.kc.KClient.R().Get("/products")
 
 	if err != nil {
-		return productDetail, fmt.Errorf("query: %w", err)
+		return product.ProductDetail{}, fmt.Errorf("failed to get products ")
 	}
+	fmt.Println(string(res.Bytes()))
 
-	return productDetail, nil
-
+	return product.ProductDetail{}, err
 }
 
 func (c Core) UpdateFieldTranslation(ctx context.Context, product_id, language_id int, key, translation string) (bool, error) {

@@ -7,6 +7,7 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/tritac/katana-mcp-goo/apps/katana-mcp/mcp/productgrp"
+	katanahttp "github.com/tritac/katana-mcp-goo/internal/client/katanaclient"
 	"github.com/tritac/katana-mcp-goo/internal/core/product"
 )
 
@@ -16,23 +17,24 @@ type KatanaTool struct {
 	Name        string
 	Description string
 	Meta        *mcp.Meta
+	Kc          katanahttp.KatanaClient
 }
 
-func NewKatanaTool(name, descriptions string, meta *mcp.Meta) *KatanaTool {
-	return &KatanaTool{Name: name, Description: descriptions, Meta: meta}
+func NewKatanaTool(name, descriptions string, meta *mcp.Meta, kc katanahttp.KatanaClient) *KatanaTool {
+	return &KatanaTool{Name: name, Description: descriptions, Meta: meta, Kc: kc}
 }
 
-func RegisterTool(katanaMCP *server.MCPServer, db *sqlx.DB) {
+func RegisterTool(katanaMCP *server.MCPServer, db *sqlx.DB, kc *katanahttp.KatanaClient) {
 
 	// productListWidget := widget.ProductListWidget()
 
-	productToolgrp := productgrp.ProductTool{
-		Product: product.NewCore(db),
+	productToolGrp := productgrp.ProductTool{
+		Product: product.NewCore(db, kc),
 	}
 
-	productListTool := productToolgrp.ProductListTool()
-	productDetailTool := productToolgrp.ProductDetailTool()
-	productTranslationUpdateTool := productToolgrp.ProductTranslationUpdateTool()
+	productListTool := productToolGrp.ProductListTool()
+	productDetailTool := productToolGrp.ProductDetailTool()
+	productTranslationUpdateTool := productToolGrp.ProductTranslationUpdateTool()
 
 	katanaMCP.AddTool(productListTool.Tool, productListTool.ToolHandler)
 	katanaMCP.AddTool(productDetailTool.Tool, productDetailTool.ToolHandler)
