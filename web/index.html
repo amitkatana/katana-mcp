@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Katana Widgets — Dev</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 560px;
+        margin: 40px auto;
+        padding: 0 16px;
+      }
+      h1 {
+        font-size: 18px;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        margin: 6px 0;
+      }
+      a {
+        color: #2563eb;
+        text-decoration: none;
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        display: inline-block;
+      }
+      a:hover {
+        border-color: #2563eb;
+      }
+      code {
+        background: #f3f4f6;
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .hint {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Katana Widget Dev Launcher</h1>
+    <ul>
+      <li><a href="/product-list.html">Product List</a></li>
+      <li>
+        <a href="/product-list.html?search=bolt"
+          >Product List (filtered: "bolt")</a
+        >
+      </li>
+      <li>
+        <a href="/product-detail.html?id=1">Product Detail (id=1)</a>
+      </li>
+      <li>
+        <a href="/product-detail.html?id=3"
+          >Product Detail (id=3, unpublished)</a
+        >
+      </li>
+      <li><a href="/translation-review.html">Translation Review</a></li>
+    </ul>
+    <p class="hint">
+      Mock <code>window.openai</code> bridge installs in dev. Real host data
+      comes through unchanged in production builds.
+    </p>
+  </body>
+</html>
