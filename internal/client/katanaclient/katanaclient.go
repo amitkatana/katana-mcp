@@ -27,7 +27,7 @@ var client = &http.Client{
 
 func NewKatanaClient(host, key string) *KatanaClient {
 
-	h := fmt.Sprintf("https://%s/api/v2", host)
+	h := fmt.Sprintf("https://%s/api/", host)
 	fmt.Println(h)
 	client := resty.NewWithClient(client).SetBaseURL(h).SetHeader("Apikey", key)
 	return &KatanaClient{

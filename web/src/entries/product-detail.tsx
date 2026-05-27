@@ -5,20 +5,21 @@ import "../main.css";
 import "../index.css";
 import "../features/products/product.css";
 import "../features/translations/translation.css";
-import { OpenAiProvider, useOpenAi } from "../AppContext/OpenAiContext";
+import { AppProviders } from "../AppContext";
+import { useTranslation } from "../AppContext/TranslationContext";
 import { ProductDetail } from "../features/products";
 import { TranslationReview } from "../features/translations";
 
 function App() {
-  const { translation } = useOpenAi();
+  const { translation } = useTranslation();
   return translation ? <TranslationReview /> : <ProductDetail />;
 }
 
 const container = document.getElementById("root")!;
 createRoot(container).render(
   <React.StrictMode>
-    <OpenAiProvider>
+    <AppProviders>
       <App />
-    </OpenAiProvider>
+    </AppProviders>
   </React.StrictMode>,
 );

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useOpenAi } from "../../../AppContext/OpenAiContext";
+import { useProductDetail } from "../../../AppContext/ProductDetailContext";
+import { useTranslation } from "../../../AppContext/TranslationContext";
 import { ProductDetailToolbar } from "./ProductDetailToolbar";
 import { ProductDetailTitle } from "./ProductDetailTitle";
 import { TabButton } from "./TabButton";
@@ -10,8 +11,8 @@ import { LocalizationsTab } from "./LocalizationsTab";
 type Tab = "details" | "descriptions" | "localizations";
 
 export function ProductDetail() {
-  const { selected: product, busy, clearSelection, goBack, openTranslation } =
-    useOpenAi();
+  const { selected: product, busy, clearSelection, goBack } = useProductDetail();
+  const { openTranslation } = useTranslation();
   const [tab, setTab] = useState<Tab>("details");
 
   if (!product) {
@@ -20,7 +21,7 @@ export function ProductDetail() {
 
   const onBack = () => {
     clearSelection();
-    void goBack();
+    goBack();
   };
   const onTranslate: OnTranslate = (params) =>
     openTranslation({ ...params, productId: product.Id });

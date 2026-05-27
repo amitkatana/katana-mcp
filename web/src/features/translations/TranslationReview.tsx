@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useOpenAi } from "../../AppContext/OpenAiContext";
+import { useTranslation } from "../../AppContext/TranslationContext";
 import { TranslationHeader } from "./TranslationHeader";
 import { TranslationOriginal } from "./TranslationOriginal";
 import { TranslationAskAi } from "./TranslationAskAi";
@@ -13,7 +13,7 @@ export function TranslationReview() {
     closeTranslation,
     updateTranslation,
     requestTranslation,
-  } = useOpenAi();
+  } = useTranslation();
   const [draft, setDraft] = useState<string>(translation?.translation ?? "");
 
   useEffect(() => {

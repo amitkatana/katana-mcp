@@ -5,27 +5,52 @@ export type Localization = {
   LocaleValue: string;
 };
 
+export type ProductImage = {
+  Id: number;
+  Url: string;
+  AltTag: string | null;
+  DisplayOrder: number;
+};
+
+export type ProductCollections = {
+  Images?: ProductImage[];
+};
+
+export type ProductTextFields = {
+  Sku: string;
+  Gtin?: string | null;
+  Name: string;
+  ShortDescription?: string | null;
+  FullDescription?: string | null;
+  ManufacturerPartNumber?: string | null;
+  EmbeddedVideo?: string | null;
+  Slug?: string;
+  MetaKeywords?: string;
+  MetaDescription?: string | null;
+};
+
 export type Product = {
-  id: number;
-  product_type_id: number | null;
-  name: string;
-  external_key: string | null;
-  gtin: string | null;
-  sku: string | null;
-  created_on_utc: string | null;
-  updated_on_utc: string | null;
-  is_published: boolean;
-  price: number | null;
-  short_description: string | null;
-  full_description: string | null;
-  localizations: Localization[];
+  Id: number;
+  CreatedOnUtc?: string;
+  UpdatedOnUtc?: string;
+  ProductType: number;
+  ProductTypeDescription: string;
+  Collections?: ProductCollections;
+  TextFieldsModel: ProductTextFields;
+};
+
+export type ResponseEnvelope = {
+  pageIndex: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  items: Product[];
 };
 
 export type ProductsOutput = {
-  products: Product[];
-  search?: string;
+  products: ResponseEnvelope;
+  query?: string;
   limit?: number;
-  selected_id?: number;
   error?: string;
 };
 

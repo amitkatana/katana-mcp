@@ -14,90 +14,103 @@ import type {
   ProductDetail,
   ProductDetailOutput,
   ProductsOutput,
+  ResponseEnvelope,
 } from "../features/products/types";
 import type { TranslationOutput } from "../features/translations/types";
 
 const FAKE_PRODUCTS: Product[] = [
   {
-    id: 1,
-    product_type_id: 10,
-    name: "Industrial Bearing 6204-2RS",
-    external_key: "EXT-001",
-    gtin: "0123456789012",
-    sku: "BRG-6204",
-    created_on_utc: "2024-08-12T09:30:00Z",
-    is_published: true,
-    updated_on_utc: null,
-    price: null,
-    short_description: null,
-    full_description: null,
-    localizations: []
+    Id: 1,
+    ProductType: 5,
+    ProductTypeDescription: "Bearing",
+    CreatedOnUtc: "2024-08-12T09:30:00Z",
+    TextFieldsModel: {
+      Name: "Industrial Bearing 6204-2RS",
+      Sku: "BRG-6204",
+      Gtin: "0123456789012",
+    },
+    Collections: {
+      Images: [
+        {
+          Id: 101,
+          Url: "https://picsum.photos/seed/bearing/80",
+          AltTag: "Bearing",
+          DisplayOrder: 0,
+        },
+      ],
+    },
   },
   {
-    id: 2,
-    product_type_id: 10,
-    name: "Stainless Bolt M8x40",
-    external_key: "EXT-002",
-    gtin: "0123456789029",
-    sku: "BOLT-M8-40",
-    created_on_utc: "2024-09-02T14:11:00Z",
-    is_published: true,
-    updated_on_utc: "2024-12-10T09:15:00Z",
-    price: 1.49,
-    short_description: "Grade A2 stainless steel hex bolt, 8mm shaft × 40mm length.",
-    full_description:
-      "<p>High-strength <strong>A2 stainless</strong> hex bolt suitable for outdoor and marine applications.</p><ul><li>Pitch: 1.25mm</li><li>Head: 13mm hex</li><li>RoHS compliant</li></ul>",
-    localizations: [
-      { LanguageId: 1, LanguageCulture: "en-US", IsDefault: true, LocaleValue: "Stainless Bolt M8x40" },
-      { LanguageId: 2, LanguageCulture: "fr-FR", IsDefault: false, LocaleValue: "Boulon inox M8x40" },
-      { LanguageId: 3, LanguageCulture: "nl-NL", IsDefault: false, LocaleValue: "RVS bout M8x40" },
-      { LanguageId: 4, LanguageCulture: "de-DE", IsDefault: false, LocaleValue: "" },
-    ]
+    Id: 2,
+    ProductType: 5,
+    ProductTypeDescription: "Fastener",
+    CreatedOnUtc: "2024-09-02T14:11:00Z",
+    UpdatedOnUtc: "2024-12-10T09:15:00Z",
+    TextFieldsModel: {
+      Name: "Stainless Bolt M8x40",
+      Sku: "BOLT-M8-40",
+      Gtin: "0123456789029",
+      ShortDescription: "Grade A2 stainless steel hex bolt, 8mm shaft × 40mm length.",
+      FullDescription:
+        "<p>High-strength <strong>A2 stainless</strong> hex bolt suitable for outdoor and marine applications.</p>",
+    },
+    Collections: {
+      Images: [
+        {
+          Id: 201,
+          Url: "https://picsum.photos/seed/bolt/80",
+          AltTag: "Bolt",
+          DisplayOrder: 0,
+        },
+        {
+          Id: 202,
+          Url: "https://picsum.photos/seed/bolt2/80",
+          AltTag: "Bolt alt",
+          DisplayOrder: 1,
+        },
+      ],
+    },
   },
   {
-    id: 3,
-    product_type_id: 11,
-    name: "Brass Hex Nut M8 (draft)",
-    external_key: null,
-    gtin: null,
-    sku: "NUT-M8",
-    created_on_utc: "2024-10-21T11:05:00Z",
-    is_published: false,
-    updated_on_utc: null,
-    price: null,
-    short_description: null,
-    full_description: null,
-    localizations: []
+    Id: 3,
+    ProductType: 15,
+    ProductTypeDescription: "Child",
+    CreatedOnUtc: "2024-10-21T11:05:00Z",
+    TextFieldsModel: {
+      Name: "Brass Hex Nut M8 (draft)",
+      Sku: "NUT-M8",
+    },
+    Collections: { Images: [] },
   },
   {
-    id: 4,
-    product_type_id: 12,
-    name: "Rubber Gasket 80mm",
-    external_key: "EXT-004",
-    gtin: "0123456789043",
-    sku: "GSK-80",
-    created_on_utc: "2024-11-15T08:45:00Z",
-    is_published: true,
-    updated_on_utc: null,
-    price: null,
-    short_description: null,
-    full_description: null,
-    localizations: []
+    Id: 4,
+    ProductType: 30,
+    ProductTypeDescription: "Parent",
+    CreatedOnUtc: "2024-11-15T08:45:00Z",
+    TextFieldsModel: {
+      Name: "Rubber Gasket 80mm",
+      Sku: "GSK-80",
+      Gtin: "0123456789043",
+    },
+    Collections: {
+      Images: [
+        {
+          Id: 401,
+          Url: "https://picsum.photos/seed/gasket/80",
+          AltTag: "Gasket",
+          DisplayOrder: 0,
+        },
+      ],
+    },
   },
   {
-    id: 5,
-    product_type_id: 13,
-    name: "Unnamed prototype",
-    external_key: null,
-    gtin: null,
-    sku: null,
-    created_on_utc: null,
-    is_published: false,
-    updated_on_utc: null,
-    price: null,
-    short_description: null,
-    full_description: null,
-    localizations: []
+    Id: 5,
+    ProductType: 40,
+    ProductTypeDescription: "Grand Parent",
+    TextFieldsModel: {
+      Name: "Unnamed prototype",
+      Sku: "",
+    },
   },
 ];
 
@@ -132,20 +145,21 @@ const FAKE_PRODUCT_DETAILS: Record<number, ProductDetail> = {
 function detailFor(id: number): ProductDetail {
   const existing = FAKE_PRODUCT_DETAILS[id];
   if (existing) return existing;
-  const p = FAKE_PRODUCTS.find((x) => x.id === id) ?? FAKE_PRODUCTS[0];
+  const p = FAKE_PRODUCTS.find((x) => x.Id === id) ?? FAKE_PRODUCTS[0];
+  const tf = p.TextFieldsModel;
   return {
-    Id: p.id,
-    ProductTypeId: p.product_type_id,
-    Name: p.name,
-    Sku: p.sku ?? "",
-    Gtin: p.gtin ?? "",
-    ExternalKey: p.external_key ?? "",
-    Price: p.price ?? 0,
+    Id: p.Id,
+    ProductTypeId: p.ProductType ?? null,
+    Name: tf.Name,
+    Sku: tf.Sku ?? "",
+    Gtin: tf.Gtin ?? "",
+    ExternalKey: "",
+    Price: 0,
     OldPrice: 0,
     StockQuantity: 0,
-    Published: p.is_published,
-    CreatedOnUtc: p.created_on_utc,
-    UpdatedOnUtc: p.updated_on_utc,
+    Published: true,
+    CreatedOnUtc: p.CreatedOnUtc ?? null,
+    UpdatedOnUtc: p.UpdatedOnUtc ?? null,
     shortDescription: [],
     FullDescription: [],
   };
@@ -161,15 +175,28 @@ function filtered(search?: string, limit?: number): Product[] {
   let rows = FAKE_PRODUCTS;
   if (search) {
     const q = search.toLowerCase();
-    rows = rows.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        (p.sku ?? "").toLowerCase().includes(q) ||
-        (p.gtin ?? "").toLowerCase().includes(q),
-    );
+    rows = rows.filter((p) => {
+      const tf = p.TextFieldsModel;
+      return (
+        tf.Name.toLowerCase().includes(q) ||
+        (tf.Sku ?? "").toLowerCase().includes(q) ||
+        (tf.Gtin ?? "").toLowerCase().includes(q)
+      );
+    });
   }
   if (limit) rows = rows.slice(0, limit);
   return rows;
+}
+
+function envelope(items: Product[], limit?: number): ResponseEnvelope {
+  const pageSize = limit ?? items.length;
+  return {
+    pageIndex: 0,
+    pageSize,
+    totalCount: FAKE_PRODUCTS.length,
+    totalPages: pageSize > 0 ? Math.ceil(FAKE_PRODUCTS.length / pageSize) : 1,
+    items,
+  };
 }
 
 const FAKE_TRANSLATION: TranslationOutput = {
@@ -199,7 +226,7 @@ function buildInitialOutput(): ProductsOutput | ProductDetailOutput | Translatio
   const search = url.searchParams.get("search") ?? "";
   const limitStr = url.searchParams.get("limit");
   const limit = limitStr ? Number(limitStr) : 50;
-  return { products: filtered(search, limit), search, limit };
+  return { products: envelope(filtered(search, limit), limit), query: search, limit };
 }
 
 function loadState(): unknown {
@@ -230,9 +257,16 @@ function install(): void {
       console.log("[mock] callTool", name, args);
       let structuredContent: ProductsOutput | ProductDetailOutput | TranslationOutput;
       if (name === "product_list" || name === "list_products") {
-        const search = (args.search as string | undefined) ?? "";
+        const search =
+          (args.query as string | undefined) ??
+          (args.search as string | undefined) ??
+          "";
         const limit = (args.limit as number | undefined) ?? 50;
-        structuredContent = { products: filtered(search, limit), search, limit };
+        structuredContent = {
+          products: envelope(filtered(search, limit), limit),
+          query: search,
+          limit,
+        };
       } else if (name === "product_detail") {
         const id = Number(args.product_id ?? args.id);
         await new Promise((r) => setTimeout(r, 200));
@@ -248,7 +282,7 @@ function install(): void {
           saved: true,
         };
       } else {
-        structuredContent = { products: [] };
+        structuredContent = { products: envelope([], 0) };
       }
       bridge.toolOutput = structuredContent;
       emit();

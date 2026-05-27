@@ -1,10 +1,12 @@
 import { FormEvent, useState } from "react";
 import { EmptyMessage } from "@openai/apps-sdk-ui/components/EmptyMessage";
-import { useOpenAi } from "../../../AppContext/OpenAiContext";
+import { useProducts } from "../../../AppContext/ProductsContext";
+import { useProductDetail } from "../../../AppContext/ProductDetailContext";
 import { ProductRow } from "./ProductRow";
 
 export function ProductList() {
-  const { products, busy, searchProducts, openProduct } = useOpenAi();
+  const { products, productsMeta, busy, searchProducts } = useProducts();
+  const { openProduct } = useProductDetail();
   const [draft, setDraft] = useState("");
 
   const submit = (e: FormEvent) => {
@@ -12,11 +14,17 @@ export function ProductList() {
     searchProducts(draft.trim());
   };
 
+  const totalCount = productsMeta?.totalCount ?? products.length;
+  const shownLabel =
+    totalCount === products.length
+      ? `${products.length} shown`
+      : `${products.length} of ${totalCount}`;
+
   return (
     <div className="flex flex-col h-full font-sans">
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
         <h1 className="text-xl font-semibold">Products</h1>
-        <span className="text-sm text-gray-500">{products.length} shown</span>
+        <span className="text-sm text-gray-500">{shownLabel}</span>
       </div>
 
       <div className="px-5 py-3 border-b border-gray-100">
@@ -52,9 +60,9 @@ export function ProductList() {
         <ul className="flex-1 overflow-y-auto divide-y divide-gray-100">
           {products.map((p) => (
             <ProductRow
-              key={p.id}
+              key={p.Id}
               product={p}
-              onSelect={() => openProduct(p.id)}
+              onSelect={() => openProduct(p.Id)}
             />
           ))}
         </ul>

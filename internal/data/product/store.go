@@ -11,10 +11,7 @@ type Store struct {
 }
 
 func NewStore(db *sqlx.DB) Store {
-	return Store{
-		db: db,
-	}
-
+	return Store{db: db}
 }
 
 func (s Store) Query(ctx context.Context, limit int, search string) ([]Product, error) {
@@ -34,34 +31,21 @@ func (s Store) Query(ctx context.Context, limit int, search string) ([]Product, 
 				ExternalKey LIKE '%' + @p2 + '%'
 			ORDER BY Name
 		`
-
 		args = append(args, search)
-
 	} else {
-		query += `
-			ORDER BY UpdatedOnUtc DESC
-		`
+		query += `ORDER BY UpdatedOnUtc DESC`
 	}
 
 	var products []Product
-
-	err := s.db.SelectContext(
-		ctx,
-		&products,
-		query,
-		limit,
-		search,
-	)
-	if err != nil {
+	if err := s.db.SelectContext(ctx, &products, query, args...); err != nil {
 		return nil, err
 	}
-
 	return products, nil
 }
 
 func (s Store) Find(ctx context.Context, productId int) (ProductDetail, error) {
-	query := `
-		SELECT Id,ProductTypeId, Name, Sku, Gtin, ExternalKey, Price, OldPrice,
+	const query = `
+		SELECT Id, ProductTypeId, Name, Sku, Gtin, ExternalKey, Price, OldPrice,
 			StockQuantity,
 			Published,
 			CreatedOnUtc,
@@ -72,17 +56,8 @@ func (s Store) Find(ctx context.Context, productId int) (ProductDetail, error) {
 	`
 
 	var product ProductDetail
-
-	err := s.db.GetContext(
-		ctx,
-		&product,
-		query,
-		productId,
-	)
-	if err != nil {
+	if err := s.db.GetContext(ctx, &product, query, productId); err != nil {
 		return product, err
 	}
-
 	return product, nil
-
 }
