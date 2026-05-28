@@ -39,5 +39,4 @@ func RegisterTool(katanaMCP *server.MCPServer, db *sqlx.DB, kc *katanahttp.Katan
 	katanaMCP.AddTool(productListTool.Tool, productListTool.ToolHandler)
 	katanaMCP.AddTool(productDetailTool.Tool, productDetailTool.ToolHandler)
 	katanaMCP.AddTool(productTranslationUpdateTool.Tool, productTranslationUpdateTool.ToolHandler)
-
 }

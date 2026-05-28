@@ -57,7 +57,7 @@ func run() error {
 
 	tools.RegisterTool(katanaMCP, db, kc)
 	rr := resources.NewResourceRegister(productListHTML, productDetailHTML)
-	rr.RegisterResources(katanaMCP)
+	rr.RegisterResources(katanaMCP, kc)
 
 	err = katanaMCPServer.Start(":8000")
 	if err != nil {

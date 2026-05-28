@@ -23,7 +23,8 @@ type ResponseEnvelop struct {
 }
 
 type ProductResponse struct {
-	ID                     int             `json:"Id"`
+	ID int `json:"Id"`
+
 	CreatedOnUtc           string          `json:"CreatedOnUtc"`
 	UpdatedOnUtc           string          `json:"UpdatedOnUtc"`
 	ProductType            ProductType     `json:"ProductType"`

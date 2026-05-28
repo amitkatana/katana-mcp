@@ -5,6 +5,8 @@ import (
 
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/tritac/katana-mcp-goo/apps/katana-mcp/resources/widget"
+	"github.com/tritac/katana-mcp-goo/internal/client/katanaclient"
+	"github.com/tritac/katana-mcp-goo/internal/core/language"
 )
 
 type ResourceRegister struct {
@@ -19,7 +21,7 @@ func NewResourceRegister(productList, productDetail string) *ResourceRegister {
 	}
 }
 
-func (rr *ResourceRegister) RegisterResources(katanaMCP *server.MCPServer) {
+func (rr *ResourceRegister) RegisterResources(katanaMCP *server.MCPServer, kc *katanaclient.KatanaClient) {
 
 	lr, lhr := widget.ProductListWidget(rr.ProductListHTML)
 	pdr, pdrh := widget.ProductDetailWidget(rr.ProductDetailHTML)
@@ -28,5 +30,10 @@ func (rr *ResourceRegister) RegisterResources(katanaMCP *server.MCPServer) {
 		lr,
 		lhr,
 	)
+
 	katanaMCP.AddResource(pdr, pdrh)
+
+	langCore := language.NewCore(kc)
+	langRes, langHandler := LanguagesResource(langCore)
+	katanaMCP.AddResource(langRes, langHandler)
 }

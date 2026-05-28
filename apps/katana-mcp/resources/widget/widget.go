@@ -7,7 +7,7 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
-const WIDGET_VERSION = "v1.3"
+const WIDGET_VERSION = "v1.4"
 
 var PRODUCT_LIST_URI = fmt.Sprintf("ui://widget/product-list-%s.html", WIDGET_VERSION)
 var PRODUCT_DETAIL_URI = fmt.Sprintf("ui://widget/product-detail-%s.html", WIDGET_VERSION)

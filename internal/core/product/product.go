@@ -8,6 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	katanahttp "github.com/tritac/katana-mcp-goo/internal/client/katanaclient"
 	"github.com/tritac/katana-mcp-goo/internal/data/product"
+	product_v2 "github.com/tritac/katana-mcp-goo/internal/data/product/v2"
 	"github.com/tritac/katana-mcp-goo/internal/data/translation"
 )
 
@@ -33,15 +34,15 @@ func (c Core) Query(ctx context.Context, query string, limit int) (product.Respo
 	return products, err
 }
 
-func (c Core) Find(ctx context.Context, productId int) (product.ProductResponse, error) {
+func (c Core) Find(ctx context.Context, productId int) (product_v2.ProductDetail, error) {
 
 	idstring := strconv.Itoa(productId)
 
-	var prod product.ProductResponse
-	res, err := c.kc.KClient.R().SetPathParam("productId", idstring).Get("/v2/products/{productId}")
+	var prod product_v2.ProductDetail
+	res, err := c.kc.KClient.R().SetPathParam("productId", idstring).SetQueryParam("includes", "translations").SetResult(&prod).Get("/v2/products/{productId}")
 	fmt.Println(string(res.Bytes()), err)
 	if err != nil {
-		return product.ProductResponse{}, fmt.Errorf("failed to get products %w", err)
+		return product_v2.ProductDetail{}, fmt.Errorf("failed to get products %w", err)
 	}
 
 	return prod, err
