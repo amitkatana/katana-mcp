@@ -100,9 +100,15 @@ func (pt *ProductTool) ProductDetailTool() *MCPDef {
 			return nil, err
 		}
 
+		languages, err := pt.Product.Languages(ctx)
+		if err != nil {
+			return nil, err
+		}
+
 		result, err := mcp.NewToolResultJSON(map[string]any{
 			"product":    products,
 			"product_id": product_id,
+			"languages":  languages,
 		})
 		if err != nil {
 			return nil, err

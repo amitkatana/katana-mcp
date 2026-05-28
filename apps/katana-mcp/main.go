@@ -10,6 +10,7 @@ import (
 	tools "github.com/tritac/katana-mcp-goo/apps/katana-mcp/mcp"
 	"github.com/tritac/katana-mcp-goo/apps/katana-mcp/resources"
 	"github.com/tritac/katana-mcp-goo/internal/client/katanaclient"
+	"github.com/tritac/katana-mcp-goo/internal/core/language"
 	"github.com/tritac/katana-mcp-goo/internal/database"
 )
 
@@ -55,9 +56,11 @@ func run() error {
 
 	katanaMCPServer := server.NewStreamableHTTPServer(katanaMCP)
 
-	tools.RegisterTool(katanaMCP, db, kc)
+	langCore := language.NewCore(kc)
+
+	tools.RegisterTool(katanaMCP, db, kc, langCore)
 	rr := resources.NewResourceRegister(productListHTML, productDetailHTML)
-	rr.RegisterResources(katanaMCP, kc)
+	rr.RegisterResources(katanaMCP, langCore)
 
 	err = katanaMCPServer.Start(":8000")
 	if err != nil {

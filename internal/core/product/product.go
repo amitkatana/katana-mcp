@@ -7,8 +7,10 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	katanahttp "github.com/tritac/katana-mcp-goo/internal/client/katanaclient"
+	"github.com/tritac/katana-mcp-goo/internal/core/language"
 	"github.com/tritac/katana-mcp-goo/internal/data/product"
 	product_v2 "github.com/tritac/katana-mcp-goo/internal/data/product/v2"
+	langdata "github.com/tritac/katana-mcp-goo/internal/data/language"
 	"github.com/tritac/katana-mcp-goo/internal/data/translation"
 )
 
@@ -16,10 +18,23 @@ type Core struct {
 	product     product.Store
 	translation translation.Store
 	kc          *katanahttp.KatanaClient
+	languages   *language.Core
 }
 
-func NewCore(db *sqlx.DB, kc *katanahttp.KatanaClient) Core {
-	return Core{product: product.NewStore(db), translation: translation.NewStore(db), kc: kc}
+func NewCore(db *sqlx.DB, kc *katanahttp.KatanaClient, languages *language.Core) Core {
+	return Core{
+		product:     product.NewStore(db),
+		translation: translation.NewStore(db),
+		kc:          kc,
+		languages:   languages,
+	}
+}
+
+func (c Core) Languages(ctx context.Context) ([]langdata.Language, error) {
+	if c.languages == nil {
+		return nil, nil
+	}
+	return c.languages.List(ctx)
 }
 
 func (c Core) Query(ctx context.Context, query string, limit int) (product.ResponseEnvelop, error) {

@@ -8,6 +8,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/tritac/katana-mcp-goo/apps/katana-mcp/mcp/productgrp"
 	katanahttp "github.com/tritac/katana-mcp-goo/internal/client/katanaclient"
+	"github.com/tritac/katana-mcp-goo/internal/core/language"
 	"github.com/tritac/katana-mcp-goo/internal/core/product"
 )
 
@@ -24,12 +25,10 @@ func NewKatanaTool(name, descriptions string, meta *mcp.Meta, kc katanahttp.Kata
 	return &KatanaTool{Name: name, Description: descriptions, Meta: meta, Kc: kc}
 }
 
-func RegisterTool(katanaMCP *server.MCPServer, db *sqlx.DB, kc *katanahttp.KatanaClient) {
-
-	// productListWidget := widget.ProductListWidget()
+func RegisterTool(katanaMCP *server.MCPServer, db *sqlx.DB, kc *katanahttp.KatanaClient, langCore *language.Core) {
 
 	productToolGrp := productgrp.ProductTool{
-		Product: product.NewCore(db, kc),
+		Product: product.NewCore(db, kc, langCore),
 	}
 
 	productListTool := productToolGrp.ProductListTool()
