@@ -61,21 +61,50 @@ export type LocalizedString = {
   LocaleKey?: string;
 };
 
+export type ProductType = {
+  id: number;
+  name: string;
+};
+
+export type TranslationLanguage = {
+  id: number;
+  twoLetterIsoCode: string;
+};
+
+export type TranslationValue = {
+  name: string | null;
+  shortdescription: string | null;
+  fullDescription: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+};
+
+export type ProductTranslation = {
+  language: TranslationLanguage;
+  value: TranslationValue;
+};
+
 export type ProductDetail = {
-  Id: number;
-  ProductTypeId: number | null;
-  Name: string;
-  Sku: string;
-  Gtin: string;
-  ExternalKey: string;
-  Price: number;
-  OldPrice: number;
-  StockQuantity: number;
-  Published: boolean;
-  CreatedOnUtc: string | null;
-  UpdatedOnUtc: string | null;
-  shortDescription: LocalizedString[] | null;
-  FullDescription: LocalizedString[] | null;
+  id: number;
+  name: string;
+  shortdescription: string | null;
+  fullDescription: string | null;
+  sku: string;
+  gtin: string;
+  externalKey: string;
+  productType: ProductType;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  stockQuantity: number;
+  productCost: number;
+  price: number;
+  oldPrice: number;
+  specialPrice: number | null;
+  published: boolean;
+  manufacturerPartNumber: string | null;
+  translations: ProductTranslation[];
+  createdOnUtc: string | null;
+  updatedOnUtc: string | null;
 };
 
 export type ProductDetailOutput = {
@@ -83,3 +112,34 @@ export type ProductDetailOutput = {
   product_id: number;
   error?: string;
 };
+
+export type TranslationFieldKey =
+  | "name"
+  | "shortdescription"
+  | "fullDescription"
+  | "metaTitle"
+  | "metaDescription";
+
+export const TRANSLATION_FIELDS: {
+  key: TranslationFieldKey;
+  label: string;
+  localeKey: string;
+}[] = [
+  { key: "name", label: "Name", localeKey: "Name" },
+  {
+    key: "shortdescription",
+    label: "Short description",
+    localeKey: "ShortDescription",
+  },
+  {
+    key: "fullDescription",
+    label: "Full description",
+    localeKey: "FullDescription",
+  },
+  { key: "metaTitle", label: "Meta title", localeKey: "MetaTitle" },
+  {
+    key: "metaDescription",
+    label: "Meta description",
+    localeKey: "MetaDescription",
+  },
+];

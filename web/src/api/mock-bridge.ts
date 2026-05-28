@@ -116,29 +116,48 @@ const FAKE_PRODUCTS: Product[] = [
 
 const FAKE_PRODUCT_DETAILS: Record<number, ProductDetail> = {
   2: {
-    Id: 2,
-    ProductTypeId: 10,
-    Name: "Stainless Bolt M8x40",
-    Sku: "BOLT-M8-40",
-    Gtin: "0123456789029",
-    ExternalKey: "EXT-002",
-    Price: 1.49,
-    OldPrice: 1.99,
-    StockQuantity: 240,
-    Published: true,
-    CreatedOnUtc: "2024-09-02T14:11:00Z",
-    UpdatedOnUtc: "2024-12-10T09:15:00Z",
-    shortDescription: [
-      { languageId: 1, languageCulture: "nl-NL", value: "RVS bout M8x40" },
-      { languageId: 3, languageCulture: "fr-FR", value: "Boulon inox M8x40" },
-    ],
-    FullDescription: [
+    id: 2,
+    name: "Stainless Bolt M8x40",
+    shortdescription: "Grade A2 stainless steel hex bolt.",
+    fullDescription:
+      "<p>High-strength <strong>A2 stainless</strong> hex bolt suitable for outdoor and marine applications.</p>",
+    sku: "BOLT-M8-40",
+    gtin: "0123456789029",
+    externalKey: "EXT-002",
+    productType: { id: 5, name: "SimpleProduct" },
+    metaTitle: "Stainless Bolt M8x40 — buy online",
+    metaDescription: "A2 stainless hex bolt 8mm × 40mm.",
+    stockQuantity: 240,
+    productCost: 0.6,
+    price: 1.49,
+    oldPrice: 1.99,
+    specialPrice: null,
+    published: true,
+    manufacturerPartNumber: "",
+    translations: [
       {
-        languageId: 1,
-        languageCulture: "nl-NL",
-        value: "<p>Hoogwaardige <strong>A2 RVS</strong> zeskantbout.</p>",
+        language: { id: 2, twoLetterIsoCode: "nl" },
+        value: {
+          name: "RVS bout M8x40",
+          shortdescription: "RVS zeskantbout A2.",
+          fullDescription: "<p>Hoogwaardige <strong>A2 RVS</strong> zeskantbout.</p>",
+          metaTitle: null,
+          metaDescription: null,
+        },
+      },
+      {
+        language: { id: 5, twoLetterIsoCode: "fr" },
+        value: {
+          name: "Boulon inox M8x40",
+          shortdescription: null,
+          fullDescription: null,
+          metaTitle: null,
+          metaDescription: null,
+        },
       },
     ],
+    createdOnUtc: "2024-09-02T14:11:00Z",
+    updatedOnUtc: "2024-12-10T09:15:00Z",
   },
 };
 
@@ -148,20 +167,29 @@ function detailFor(id: number): ProductDetail {
   const p = FAKE_PRODUCTS.find((x) => x.Id === id) ?? FAKE_PRODUCTS[0];
   const tf = p.TextFieldsModel;
   return {
-    Id: p.Id,
-    ProductTypeId: p.ProductType ?? null,
-    Name: tf.Name,
-    Sku: tf.Sku ?? "",
-    Gtin: tf.Gtin ?? "",
-    ExternalKey: "",
-    Price: 0,
-    OldPrice: 0,
-    StockQuantity: 0,
-    Published: true,
-    CreatedOnUtc: p.CreatedOnUtc ?? null,
-    UpdatedOnUtc: p.UpdatedOnUtc ?? null,
-    shortDescription: [],
-    FullDescription: [],
+    id: p.Id,
+    name: tf.Name,
+    shortdescription: tf.ShortDescription ?? null,
+    fullDescription: tf.FullDescription ?? null,
+    sku: tf.Sku ?? "",
+    gtin: tf.Gtin ?? "",
+    externalKey: "",
+    productType: {
+      id: p.ProductType ?? 0,
+      name: p.ProductTypeDescription ?? "",
+    },
+    metaTitle: null,
+    metaDescription: tf.MetaDescription ?? null,
+    stockQuantity: 0,
+    productCost: 0,
+    price: 0,
+    oldPrice: 0,
+    specialPrice: null,
+    published: true,
+    manufacturerPartNumber: tf.ManufacturerPartNumber ?? null,
+    translations: [],
+    createdOnUtc: p.CreatedOnUtc ?? null,
+    updatedOnUtc: p.UpdatedOnUtc ?? null,
   };
 }
 
@@ -213,7 +241,7 @@ function buildInitialOutput(): ProductsOutput | ProductDetailOutput | Translatio
   if (path.endsWith("product-detail.html")) {
     const id = Number(url.searchParams.get("id") ?? 2);
     const detail = detailFor(id);
-    return { product: detail, product_id: detail.Id };
+    return { product: detail, product_id: detail.id };
   }
   if (path.endsWith("translation-review.html")) {
     const out: TranslationOutput = { ...FAKE_TRANSLATION };
@@ -271,7 +299,7 @@ function install(): void {
         const id = Number(args.product_id ?? args.id);
         await new Promise((r) => setTimeout(r, 200));
         const detail = detailFor(id);
-        structuredContent = { product: detail, product_id: detail.Id };
+        structuredContent = { product: detail, product_id: detail.id };
       } else if (name === "update_translation") {
         // simulate latency + echo back saved translation
         await new Promise((r) => setTimeout(r, 400));

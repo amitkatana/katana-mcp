@@ -1,14 +1,14 @@
 import { useState } from "react";
+import { SegmentedControl } from "@openai/apps-sdk-ui/components/SegmentedControl";
+import { EmptyMessage } from "@openai/apps-sdk-ui/components/EmptyMessage";
 import { useProductDetail } from "../../../AppContext/ProductDetailContext";
 import { useTranslation } from "../../../AppContext/TranslationContext";
 import { ProductDetailToolbar } from "./ProductDetailToolbar";
 import { ProductDetailTitle } from "./ProductDetailTitle";
-import { TabButton } from "./TabButton";
 import { DetailsTab } from "./DetailsTab";
-import { DescriptionsTab, type OnTranslate } from "./DescriptionsTab";
-import { LocalizationsTab } from "./LocalizationsTab";
+import { TranslationsTab, type OnTranslate } from "./TranslationsTab";
 
-type Tab = "details" | "descriptions" | "localizations";
+type Tab = "details" | "translations";
 
 export function ProductDetail() {
   const { selected: product, busy, clearSelection, goBack } = useProductDetail();
@@ -16,7 +16,13 @@ export function ProductDetail() {
   const [tab, setTab] = useState<Tab>("details");
 
   if (!product) {
-    return <div className="empty">No product loaded.</div>;
+    return (
+      <div className="w-full px-5 py-8 text-[var(--color-text)]">
+        <EmptyMessage>
+          <EmptyMessage.Title>No product loaded</EmptyMessage.Title>
+        </EmptyMessage>
+      </div>
+    );
   }
 
   const onBack = () => {
@@ -24,47 +30,44 @@ export function ProductDetail() {
     goBack();
   };
   const onTranslate: OnTranslate = (params) =>
-    openTranslation({ ...params, productId: product.Id });
+    openTranslation({ ...params, productId: product.id });
 
-  const langSet = new Set<string>();
-  for (const loc of product.shortDescription ?? []) langSet.add(loc.languageCulture);
-  for (const loc of product.FullDescription ?? []) langSet.add(loc.languageCulture);
-  const locCount = langSet.size;
+  const locCount = product.translations?.length ?? 0;
 
   return (
-    <div className="w-full text-zinc-100">
+    <div className="w-full text-[var(--color-text)]">
       <div className="max-w-3xl mx-auto px-5 py-5">
         <ProductDetailToolbar product={product} busy={busy} onBack={onBack} />
 
-        <div className="bg-white/[0.04] backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden shadow-xl shadow-black/20">
+        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] overflow-hidden">
           <ProductDetailTitle product={product} />
 
-          <div className="flex items-center gap-1 px-3 pt-3 border-b border-white/10">
-            <TabButton active={tab === "details"} onClick={() => setTab("details")}>
-              Details
-            </TabButton>
-            <TabButton
-              active={tab === "descriptions"}
-              onClick={() => setTab("descriptions")}
+          <div className="px-4 pt-3 pb-1 border-b border-[var(--color-border)]">
+            <SegmentedControl
+              value={tab}
+              onChange={(v) => setTab(v as Tab)}
+              size="sm"
             >
-              Descriptions
-            </TabButton>
-            <TabButton
-              active={tab === "localizations"}
-              onClick={() => setTab("localizations")}
-              count={locCount}
-            >
-              Localizations
-            </TabButton>
+              <SegmentedControl.Option value="details">
+                Details
+              </SegmentedControl.Option>
+              <SegmentedControl.Option value="translations">
+                <span className="inline-flex items-center gap-1.5">
+                  Translations
+                  {locCount > 0 && (
+                    <span className="text-[10px] tabular-nums opacity-70">
+                      {locCount}
+                    </span>
+                  )}
+                </span>
+              </SegmentedControl.Option>
+            </SegmentedControl>
           </div>
 
           <div className="min-h-[200px]">
             {tab === "details" && <DetailsTab product={product} />}
-            {tab === "descriptions" && (
-              <DescriptionsTab product={product} onTranslate={onTranslate} />
-            )}
-            {tab === "localizations" && (
-              <LocalizationsTab product={product} onTranslate={onTranslate} />
+            {tab === "translations" && (
+              <TranslationsTab product={product} onTranslate={onTranslate} />
             )}
           </div>
         </div>
