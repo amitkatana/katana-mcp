@@ -17,11 +17,18 @@ import { isTranslationPayload } from "./payload";
 
 type OpenTranslationParams = {
   field: string;
-  language: string;
-  languageId?: number;
   key?: string;
-  original?: string;
   productId?: number;
+  original?: string;
+};
+
+type RequestTranslationParams = {
+  referenceLanguageName: string;
+  referenceLanguageCulture: string;
+  referenceText: string;
+  targetLanguageName: string;
+  targetLanguageCulture: string;
+  fieldLabel: string;
 };
 
 type Value = {
@@ -30,8 +37,8 @@ type Value = {
   justSaved: boolean;
   openTranslation: (p: OpenTranslationParams) => void;
   closeTranslation: () => void;
-  updateTranslation: (draft: string) => Promise<void>;
-  requestTranslation: () => Promise<void>;
+  updateTranslation: (draft: string, targetLanguageId: number) => Promise<void>;
+  requestTranslation: (p: RequestTranslationParams) => Promise<void>;
 };
 
 const Ctx = createContext<Value | null>(null);
@@ -61,12 +68,10 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   });
 
   const openTranslation = useCallback(
-    ({ field, language, languageId, key, original, productId }: OpenTranslationParams) => {
+    ({ field, key, original, productId }: OpenTranslationParams) => {
       setTranslation({
         product_id: productId,
         field,
-        language,
-        language_id: languageId,
         key,
         original,
         translation: "",
@@ -78,12 +83,17 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   const closeTranslation = useCallback(() => setTranslation(null), []);
 
   const updateTranslation = useCallback(
-    async (draft: string) => {
+    async (draft: string, targetLanguageId: number) => {
       const current = translation;
       if (!current) return;
       const bridge = getBridge();
       if (!bridge?.callTool) {
-        setTranslation({ ...current, translation: draft, saved: true });
+        setTranslation({
+          ...current,
+          translation: draft,
+          language_id: targetLanguageId,
+          saved: true,
+        });
         setSavedAt(Date.now());
         return;
       }
@@ -92,7 +102,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
         const res = await bridge.callTool("update_translation", {
           product_id: current.product_id,
           key: current.key ?? current.field,
-          language_id: current.language_id,
+          language_id: targetLanguageId,
           translation: draft,
         });
         const sc = res?.structuredContent as TranslationOutput | undefined;
@@ -107,16 +117,23 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
     [translation],
   );
 
-  const requestTranslation = useCallback(async () => {
-    if (!translation) return;
-    const original = translation.original ?? "";
-    const productId = translation.product_id;
-    const field = translation.field;
-    const prompt =
-      `Translate the following ${field ?? "text"} for product ${productId ?? ""} into Dutch (nl-NL). ` +
-      `Return only the Dutch translation as plain text, no extra commentary.\n\nOriginal:\n${original}`;
-    await sendFollowupTurn(prompt);
-  }, [translation]);
+  const requestTranslation = useCallback(
+    async ({
+      referenceLanguageName,
+      referenceLanguageCulture,
+      referenceText,
+      targetLanguageName,
+      targetLanguageCulture,
+      fieldLabel,
+    }: RequestTranslationParams) => {
+      if (!referenceText) return;
+      const prompt =
+        `Translate the following ${fieldLabel} from ${referenceLanguageName} (${referenceLanguageCulture}) into ${targetLanguageName} (${targetLanguageCulture}). ` +
+        `Return only the ${targetLanguageName} translation as plain text, no extra commentary.\n\nSource:\n${referenceText}`;
+      await sendFollowupTurn(prompt);
+    },
+    [],
+  );
 
   const value: Value = {
     translation,

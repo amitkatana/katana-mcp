@@ -10,6 +10,7 @@
  *   /product-detail.html?id=2       → single product
  */
 import type {
+  Language,
   Product,
   ProductDetail,
   ProductDetailOutput,
@@ -227,6 +228,57 @@ function envelope(items: Product[], limit?: number): ResponseEnvelope {
   };
 }
 
+const FAKE_LANGUAGES: Language[] = [
+  {
+    id: 1,
+    name: "English",
+    languageCulture: "en-US",
+    languageCode: "gb",
+    published: true,
+    isDefault: true,
+  },
+  {
+    id: 2,
+    name: "Dutch",
+    languageCulture: "nl-NL",
+    languageCode: "nl",
+    published: true,
+    isDefault: false,
+  },
+  {
+    id: 3,
+    name: "German",
+    languageCulture: "de-DE",
+    languageCode: "de",
+    published: true,
+    isDefault: false,
+  },
+  {
+    id: 5,
+    name: "French",
+    languageCulture: "fr-FR",
+    languageCode: "fr",
+    published: true,
+    isDefault: false,
+  },
+  {
+    id: 7,
+    name: "Italian",
+    languageCulture: "it-IT",
+    languageCode: "it",
+    published: false,
+    isDefault: false,
+  },
+  {
+    id: 11,
+    name: "Poland",
+    languageCulture: "pl-PL",
+    languageCode: "PL",
+    published: true,
+    isDefault: false,
+  },
+];
+
 const FAKE_TRANSLATION: TranslationOutput = {
   product_id: 2,
   field: "name",
@@ -241,7 +293,7 @@ function buildInitialOutput(): ProductsOutput | ProductDetailOutput | Translatio
   if (path.endsWith("product-detail.html")) {
     const id = Number(url.searchParams.get("id") ?? 2);
     const detail = detailFor(id);
-    return { product: detail, product_id: detail.id };
+    return { product: detail, product_id: detail.id, languages: FAKE_LANGUAGES };
   }
   if (path.endsWith("translation-review.html")) {
     const out: TranslationOutput = { ...FAKE_TRANSLATION };

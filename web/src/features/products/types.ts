@@ -107,9 +107,21 @@ export type ProductDetail = {
   updatedOnUtc: string | null;
 };
 
+export type Language = {
+  id: number;
+  name: string;
+  languageCulture: string;
+  languageCode: string;
+  published: boolean;
+  isDefault: boolean;
+  createdOnUtc?: string;
+  updatedOnUtc?: string;
+};
+
 export type ProductDetailOutput = {
   product: ProductDetail;
   product_id: number;
+  languages?: Language[];
   error?: string;
 };
 

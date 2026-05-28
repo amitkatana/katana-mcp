@@ -11,7 +11,13 @@ import { TranslationsTab, type OnTranslate } from "./TranslationsTab";
 type Tab = "details" | "translations";
 
 export function ProductDetail() {
-  const { selected: product, busy, clearSelection, goBack } = useProductDetail();
+  const {
+    selected: product,
+    languages,
+    busy,
+    clearSelection,
+    goBack,
+  } = useProductDetail();
   const { openTranslation } = useTranslation();
   const [tab, setTab] = useState<Tab>("details");
 
@@ -32,7 +38,7 @@ export function ProductDetail() {
   const onTranslate: OnTranslate = (params) =>
     openTranslation({ ...params, productId: product.id });
 
-  const locCount = product.translations?.length ?? 0;
+  const locCount = languages.length || product.translations?.length || 0;
 
   return (
     <div className="w-full text-[var(--color-text)]">
@@ -67,7 +73,11 @@ export function ProductDetail() {
           <div className="min-h-[200px]">
             {tab === "details" && <DetailsTab product={product} />}
             {tab === "translations" && (
-              <TranslationsTab product={product} onTranslate={onTranslate} />
+              <TranslationsTab
+                product={product}
+                languages={languages}
+                onTranslate={onTranslate}
+              />
             )}
           </div>
         </div>
