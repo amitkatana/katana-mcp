@@ -9,14 +9,16 @@ import (
 )
 
 type ResourceRegister struct {
-	ProductListHTML   string
-	ProductDetailHTML string
+	ProductListHTML        string
+	ProductDetailHTML      string
+	productTranslationHTML string
 }
 
-func NewResourceRegister(productList, productDetail string) *ResourceRegister {
+func NewResourceRegister(productList, productDetail, productTranslation string) *ResourceRegister {
 	return &ResourceRegister{
-		ProductListHTML:   productList,
-		ProductDetailHTML: productDetail,
+		ProductListHTML:        productList,
+		ProductDetailHTML:      productDetail,
+		productTranslationHTML: productTranslation,
 	}
 }
 

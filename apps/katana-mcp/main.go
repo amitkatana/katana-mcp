@@ -20,6 +20,9 @@ var productDetailHTML string
 //go:embed dist/product-list.html
 var productListHTML string
 
+//go:embed dist/translation-review.html
+var productTranslationHTML string
+
 const prefix = "KATANA"
 
 func main() {
@@ -59,7 +62,7 @@ func run() error {
 	langCore := language.NewCore(kc)
 
 	tools.RegisterTool(katanaMCP, db, kc, langCore)
-	rr := resources.NewResourceRegister(productListHTML, productDetailHTML)
+	rr := resources.NewResourceRegister(productListHTML, productDetailHTML, productTranslationHTML)
 	rr.RegisterResources(katanaMCP, langCore)
 
 	err = katanaMCPServer.Start(":8000")
