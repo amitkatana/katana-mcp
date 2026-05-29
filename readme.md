@@ -21,3 +21,9 @@
 - Click on create 
 
 ![alt text](docs/chat.png)
+
+
+### Prompts
+- get products from katanaPIM
+- get 10 products from katanaPIM
+- fetch products details for product id "product id"
