@@ -8,9 +8,9 @@ import (
 	"github.com/jmoiron/sqlx"
 	katanahttp "github.com/tritac/katana-mcp-goo/internal/client/katanaclient"
 	"github.com/tritac/katana-mcp-goo/internal/core/language"
+	langdata "github.com/tritac/katana-mcp-goo/internal/data/language"
 	"github.com/tritac/katana-mcp-goo/internal/data/product"
 	product_v2 "github.com/tritac/katana-mcp-goo/internal/data/product/v2"
-	langdata "github.com/tritac/katana-mcp-goo/internal/data/language"
 	"github.com/tritac/katana-mcp-goo/internal/data/translation"
 )
 
@@ -64,10 +64,79 @@ func (c Core) Find(ctx context.Context, productId int) (product_v2.ProductDetail
 }
 
 func (c Core) UpdateFieldTranslation(ctx context.Context, product_id, language_id int, key, translation string) (bool, error) {
-	update, err := c.translation.UpdateProductTranslation(ctx, product_id, language_id, key, translation)
+
+	validFields := map[string]bool{
+		"Name":             true,
+		"ShortDescription": true,
+		"FullDescription":  true,
+		"MetaTitle":        true,
+		"MetaDescription":  true,
+	}
+	if !validFields[key] {
+		return false, fmt.Errorf("invalid translation field key: %q", key)
+	}
+
+	value, err := buildPatchValue(key, translation)
 	if err != nil {
 		return false, err
 	}
 
-	return update, err
+	prod, err := c.Find(ctx, product_id)
+	if err != nil {
+		return false, fmt.Errorf("load product for patch: %w", err)
+	}
+	if prod.Name == "" {
+		return false, fmt.Errorf("product %d missing required Name", product_id)
+	}
+	if prod.ProductType.ID == 0 {
+		return false, fmt.Errorf("product %d missing required ProductType", product_id)
+	}
+
+	patch := product_v2.ProductPatchRequest{
+		Name:        prod.Name,
+		ProductType: product_v2.PatchProductType{ID: prod.ProductType.ID},
+		Translations: []product_v2.PatchTranslation{
+			{
+				Language: product_v2.Language{ID: language_id},
+				Value:    value,
+			},
+		},
+	}
+
+	resp, err := c.kc.KClient.R().
+		SetContext(ctx).
+		SetBody(patch).
+		SetPathParam("id", strconv.Itoa(product_id)).
+		Patch("/v2/products/{id}")
+	if err != nil {
+		return false, fmt.Errorf("patch product request: %w", err)
+	}
+
+	if resp.IsError() {
+		return false, fmt.Errorf("patch product failed: status %d body: %s", resp.StatusCode(), resp.String())
+	}
+
+	return true, nil
+}
+
+func buildPatchValue(key, translation string) (product_v2.PatchValue, error) {
+	v := product_v2.PatchValue{}
+	t := &translation
+
+	switch key {
+	case "Name":
+		v.Name = t
+	case "ShortDescription":
+		v.Shortdescription = t
+	case "FullDescription":
+		v.FullDescription = t
+	case "MetaTitle":
+		v.MetaTitle = t
+	case "MetaDescription":
+		v.MetaDescription = t
+	default:
+		return v, fmt.Errorf("unknown field: %q", key)
+	}
+
+	return v, nil
 }

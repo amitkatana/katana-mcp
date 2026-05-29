@@ -15,6 +15,7 @@ export function ProductDetail() {
     selected: product,
     languages,
     busy,
+    openProduct,
     clearSelection,
     goBack,
   } = useProductDetail();
@@ -35,6 +36,7 @@ export function ProductDetail() {
     clearSelection();
     goBack();
   };
+  const onRefresh = () => void openProduct(product.id);
   const onTranslate: OnTranslate = (params) =>
     openTranslation({ ...params, productId: product.id });
 
@@ -43,7 +45,12 @@ export function ProductDetail() {
   return (
     <div className="w-full text-[var(--color-text)]">
       <div className="max-w-3xl mx-auto px-5 py-5">
-        <ProductDetailToolbar product={product} busy={busy} onBack={onBack} />
+        <ProductDetailToolbar
+          product={product}
+          busy={busy}
+          onBack={onBack}
+          onRefresh={onRefresh}
+        />
 
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] overflow-hidden">
           <ProductDetailTitle product={product} />

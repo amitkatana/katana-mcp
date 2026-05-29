@@ -3,7 +3,11 @@ import { Badge } from "@openai/apps-sdk-ui/components/Badge";
 import { Button } from "@openai/apps-sdk-ui/components/Button";
 import { Alert } from "@openai/apps-sdk-ui/components/Alert";
 import { Textarea } from "@openai/apps-sdk-ui/components/Textarea";
-import { ArrowLeftSm, Translate } from "@openai/apps-sdk-ui/components/Icon";
+import {
+  ArrowLeftSm,
+  ArrowRotateCw,
+  Translate,
+} from "@openai/apps-sdk-ui/components/Icon";
 import { EmptyMessage } from "@openai/apps-sdk-ui/components/EmptyMessage";
 import { useTranslation } from "../../AppContext/TranslationContext";
 import { useProductDetail } from "../../AppContext/ProductDetailContext";
@@ -25,7 +29,12 @@ export function TranslationReview() {
     updateTranslation,
     requestTranslation,
   } = useTranslation();
-  const { selected: product, languages } = useProductDetail();
+  const {
+    selected: product,
+    languages,
+    openProduct,
+    busy: productBusy,
+  } = useProductDetail();
 
   const fieldKey = (translation?.field as TranslationFieldKey | undefined) ?? "name";
   const fieldDef =
@@ -103,7 +112,12 @@ export function TranslationReview() {
       fieldLabel: fieldDef.label.toLowerCase(),
     });
 
-  const onUpdate = () => void updateTranslation(draft, targetLang.id);
+  const onUpdate = async () => {
+    await updateTranslation(draft, targetLang.id);
+    if (translation.product_id != null) {
+      await openProduct(translation.product_id);
+    }
+  };
 
   return (
     <div className="w-full text-[var(--color-text)]">
@@ -117,11 +131,31 @@ export function TranslationReview() {
           >
             <ArrowLeftSm className="w-4 h-4" /> Back
           </Button>
-          {translation.product_id != null && (
-            <span className="font-mono text-xs text-[var(--color-text-tertiary)]">
-              #{translation.product_id}
-            </span>
-          )}
+          <div className="flex items-center gap-3">
+            {translation.product_id != null && (
+              <Button
+                variant="ghost"
+                color="secondary"
+                size="sm"
+                onClick={() =>
+                  translation.product_id != null &&
+                  void openProduct(translation.product_id)
+                }
+                disabled={productBusy}
+                title="Re-fetch latest product data"
+              >
+                <ArrowRotateCw
+                  className={`w-4 h-4 ${productBusy ? "animate-spin" : ""}`}
+                />
+                {productBusy ? "Refreshing…" : "Refresh"}
+              </Button>
+            )}
+            {translation.product_id != null && (
+              <span className="font-mono text-xs text-[var(--color-text-tertiary)]">
+                #{translation.product_id}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-elevated)] overflow-hidden">
@@ -215,8 +249,8 @@ export function TranslationReview() {
                 color="primary"
                 variant="solid"
                 size="sm"
-                onClick={onUpdate}
-                disabled={busy || !dirty}
+                onClick={() => void onUpdate()}
+                disabled={busy || productBusy || !dirty}
               >
                 {busy ? "Updating…" : "Update"}
               </Button>

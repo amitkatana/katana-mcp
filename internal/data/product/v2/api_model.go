@@ -41,3 +41,28 @@ type Translations struct {
 	Language Language `json:"language"`
 	Value    Value    `json:"value"`
 }
+
+// PATCH VALUEW
+
+type PatchValue struct {
+	Name             *string `json:"name,omitempty"`
+	Shortdescription *string `json:"shortdescription,omitempty"`
+	FullDescription  *string `json:"fullDescription,omitempty"`
+	MetaTitle        *string `json:"metaTitle,omitempty"`
+	MetaDescription  *string `json:"metaDescription,omitempty"`
+}
+
+type PatchTranslation struct {
+	Language Language   `json:"language"`
+	Value    PatchValue `json:"value"`
+}
+
+type PatchProductType struct {
+	ID int `json:"id"`
+}
+
+type ProductPatchRequest struct {
+	Name         string             `json:"name"`
+	ProductType  PatchProductType   `json:"productType"`
+	Translations []PatchTranslation `json:"translations,omitempty"`
+}
